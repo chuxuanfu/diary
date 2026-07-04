@@ -1,0 +1,25 @@
+node_modules/
+dist/
+*.app
+Local Diary.app
+.DS_Store
+npm-debug.log*
+
+# Local app/user data
+DiaryVault/
+*.sqlite3
+*.sqlite3-*
+
+# Generated local samples and media
+test-materials/
+*.aiff
+*.wav
+*.mp3
+*.m4a
+
+# macOS/editor noise
+Icon?
+.Spotlight-V100
+.Trashes
+.vscode/
+.idea/

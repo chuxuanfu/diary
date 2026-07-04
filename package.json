@@ -1,0 +1,43 @@
+{
+  "name": "local-diary",
+  "version": "0.1.5",
+  "description": "Local macOS diary tool with voice, image and draft material processing.",
+  "main": "src/main.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "electron .",
+    "check": "node scripts/check.js",
+    "samples": "node scripts/create-test-materials.js",
+    "package": "node scripts/package.js",
+    "package:dir": "electron-builder --mac dir"
+  },
+  "keywords": [
+    "diary",
+    "macos",
+    "local-ai"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "local.diary.macos",
+    "productName": "Local Diary",
+    "asar": true,
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": [
+        "dir"
+      ]
+    }
+  }
+}
