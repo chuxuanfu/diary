@@ -8,6 +8,10 @@ const productName = 'Local Diary';
 const userApplications = path.join(os.homedir(), 'Applications');
 const systemApplications = '/Applications';
 const projectAlias = path.join(root, `${productName}.app`);
+const sourceIcon = path.join(root, 'icon.png');
+const buildDir = path.join(root, 'build');
+const iconsetDir = path.join(buildDir, 'icon.iconset');
+const macIcon = path.join(buildDir, 'icon.icns');
 
 function run(command, args, options = {}) {
   execFileSync(command, args, {
@@ -21,6 +25,35 @@ function ensureDependencies() {
   if (!fs.existsSync(path.join(root, 'node_modules', 'electron-builder'))) {
     run('npm', ['install']);
   }
+}
+
+function ensureMacIcon() {
+  if (process.platform !== 'darwin') return;
+  if (!fs.existsSync(sourceIcon)) {
+    throw new Error(`没有找到 app icon：${sourceIcon}`);
+  }
+  fs.rmSync(iconsetDir, { recursive: true, force: true });
+  fs.mkdirSync(iconsetDir, { recursive: true });
+  fs.mkdirSync(buildDir, { recursive: true });
+
+  const icons = [
+    ['icon_16x16.png', 16],
+    ['icon_16x16@2x.png', 32],
+    ['icon_32x32.png', 32],
+    ['icon_32x32@2x.png', 64],
+    ['icon_128x128.png', 128],
+    ['icon_128x128@2x.png', 256],
+    ['icon_256x256.png', 256],
+    ['icon_256x256@2x.png', 512],
+    ['icon_512x512.png', 512],
+    ['icon_512x512@2x.png', 1024]
+  ];
+  for (const [name, size] of icons) {
+    run('/usr/bin/sips', ['-z', String(size), String(size), sourceIcon, '--out', path.join(iconsetDir, name)]);
+  }
+  fs.rmSync(macIcon, { force: true });
+  run('/usr/bin/iconutil', ['-c', 'icns', iconsetDir, '-o', macIcon]);
+  fs.rmSync(iconsetDir, { recursive: true, force: true });
 }
 
 function copyDir(source, target) {
@@ -54,6 +87,7 @@ function candidateApps() {
 }
 
 ensureDependencies();
+ensureMacIcon();
 run('npx', ['electron-builder', '--mac', 'dir', '--publish', 'never']);
 
 const apps = candidateApps().filter((appPath) => path.basename(appPath) === `${productName}.app`);
